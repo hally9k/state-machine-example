@@ -12,12 +12,36 @@ import 'rxjs/add/operator/takeWhile'
 import 'rxjs/add/operator/do'
 import './index.scss'
 
+const lightMachine = Machine({
+	key: 'light',
+	initial: 'green',
+	states: {
+		green: {
+			on: {
+				TIMER: 'orange'
+			}
+		},
+		orange: {
+			onEntry: ['flashOn'],
+			on: {
+				TIMER: 'red'
+			},
+			onExit: ['flashOff']
+		},
+		red: {
+			on: {
+				TIMER: 'green'
+			}
+		}
+	}
+})
+
 class Root extends React.Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			light: 'green',
+			light: lightMachine.initialState.value,
 			flash: false
 		}
 	}
@@ -35,32 +59,6 @@ class Root extends React.Component {
 		}
 	}
 
-	transition = () => {}
-
-	lightMachine = Machine({
-		key: 'light',
-		initial: 'green',
-		states: {
-			green: {
-				on: {
-					TIMER: 'orange'
-				}
-			},
-			orange: {
-				onEntry: ['flashOn'],
-				on: {
-					TIMER: 'red'
-				},
-				onExit: ['flashOff']
-			},
-			red: {
-				on: {
-					TIMER: 'green'
-				}
-			}
-		}
-	})
-
 	clickSubject = new Subject()
 
 	clickObservable = Observable.from(this.clickSubject)
@@ -73,7 +71,7 @@ class Root extends React.Component {
 		.subscribe()
 
 	transitionLightState = () => {
-		const nextLightState = this.lightMachine.transition(this.state.light, 'TIMER')
+		const nextLightState = lightMachine.transition(this.state.light, 'TIMER')
 
 		nextLightState.actions.forEach(this.command)
 

@@ -14,20 +14,18 @@ export const statechart = {
 	initial: 'green',
 	states: {
 		green: {
-			onEntry: 'green',
 			on: {
 				TIMER: 'orange'
 			}
 		},
 		orange: {
-			onEntry: ['orange', 'flashOn'],
+			onEntry: 'flashOn',
 			on: {
 				TIMER: 'red'
 			},
 			onExit: 'flashOff'
 		},
 		red: {
-			onEntry: 'red',
 			on: {
 				TIMER: 'green'
 			}
@@ -40,7 +38,7 @@ class Root extends React.Component {
 		super(props)
 
 		this.state = {
-			flash: false
+			flashing: false
 		}
 	}
 
@@ -52,8 +50,8 @@ class Root extends React.Component {
 		this.clickObservable.unsubscribe()
 	}
 
-	flashOn = () => this.setState({ flash: true })
-	flashOff = () => this.setState({ flash: false })
+	flashOn = () => this.setState({ flashing: true })
+	flashOff = () => this.setState({ flashing: false })
 
 	clickSubject = new Subject()
 
@@ -69,14 +67,16 @@ class Root extends React.Component {
 		this.props.transition('TIMER')
 	}
 
+	get color() {
+		return this.props.machineState.value
+	}
+
 	render() {
-		const { flash } = this.state
-		const {
-			machineState: { value: color }
-		} = this.props
+		const { flashing } = this.state
+
 		return (
 			<div className="app">
-				<TrafficLight color={color} flashing={flash} />
+				<TrafficLight color={this.color} flashing={flashing} />
 				<div className="cross-button" onClick={() => this.clickSubject.next()} />
 			</div>
 		)

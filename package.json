@@ -1,22 +1,13 @@
 {
-  "name": "fresh-stack",
+  "name": "state-machine-example",
   "version": "0.0.1",
-  "description": "React stack of the freshest tech.",
+  "description": "State machine react example using x-state and react-automata.",
   "main": "index.js",
   "author": "hally9k",
   "license": "MIT",
   "scripts": {
     "start": "webpack-serve ./webpack.config.js",
     "build": "rm -rf ./dist/* && NODE_ENV=production webpack",
-    "deploy": "gh-pages-deploy -- \"Deploy\""
-  },
-  "gh-pages-deploy": {
-    "staticpath": "dist",
-    "cname": "beaux.nz",
-    "prep": [
-      "build"
-    ],
-    "noprompt": false
   },
   "dependencies": {
     "classnames": "^2.2.5",

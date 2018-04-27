@@ -1,83 +1,76 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import { Machine } from 'xstate'
+import { withStatechart } from 'react-automata'
 import TrafficLight from './traffic-light'
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
-import 'rxjs/add/observable/of'
 import 'rxjs/add/observable/from'
 import 'rxjs/add/operator/delay'
-import 'rxjs/add/operator/concatMap'
-import 'rxjs/add/operator/takeWhile'
 import 'rxjs/add/operator/do'
 import './index.scss'
 
-const lightMachine = Machine({
+export const lightStateChart = {
 	key: 'light',
 	initial: 'green',
 	states: {
 		green: {
+			onEntry: 'green',
 			on: {
 				TIMER: 'orange'
 			}
 		},
 		orange: {
-			onEntry: ['flashOn'],
+			onEntry: ['orange', 'flashOn'],
 			on: {
 				TIMER: 'red'
 			},
-			onExit: ['flashOff']
+			onExit: 'flashOff'
 		},
 		red: {
+			onEntry: 'red',
 			on: {
 				TIMER: 'green'
 			}
 		}
 	}
-})
+}
 
 class Root extends React.Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			light: lightMachine.initialState.value,
+			light: lightStateChart.initial,
 			flash: false
 		}
 	}
 
-	command = action => {
-		switch (action) {
-			case 'flashOn':
-				this.setState({ flash: true })
-				break
-			case 'flashOff':
-				this.setState({ flash: false })
-				break
-			default:
-				break
-		}
+	componentDidMount() {
+		this.clickObservable.subscribe()
 	}
+
+	componentWillUnmount() {
+		this.clickObservable.unsubscribe()
+	}
+
+	green = () => this.setState({ light: 'green' })
+	orange = () => this.setState({ light: 'orange' })
+	red = () => this.setState({ light: 'red' })
+	flashOn = () => this.setState({ flash: true })
+	flashOff = () => this.setState({ flash: false })
 
 	clickSubject = new Subject()
 
 	clickObservable = Observable.from(this.clickSubject)
 		.delay(2000)
-		.do(() => this.transitionLightState())
+		.do(() => this.timer())
 		.delay(3000)
-		.do(() => this.transitionLightState())
+		.do(() => this.timer())
 		.delay(5000)
-		.do(() => this.transitionLightState())
-		.subscribe()
+		.do(() => this.timer())
 
-	transitionLightState = () => {
-		const nextLightState = lightMachine.transition(this.state.light, 'TIMER')
-
-		nextLightState.actions.forEach(this.command)
-
-		this.setState(() => ({
-			light: nextLightState.value
-		}))
+	timer = () => {
+		this.props.transition('TIMER')
 	}
 
 	render() {
@@ -91,4 +84,4 @@ class Root extends React.Component {
 	}
 }
 
-export default hot(module)(Root)
+export default hot(module)(withStatechart(lightStateChart)(Root))

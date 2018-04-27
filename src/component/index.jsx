@@ -40,7 +40,6 @@ class Root extends React.Component {
 		super(props)
 
 		this.state = {
-			light: statechart.initial,
 			flash: false
 		}
 	}
@@ -53,9 +52,6 @@ class Root extends React.Component {
 		this.clickObservable.unsubscribe()
 	}
 
-	green = () => this.setState({ light: 'green' })
-	orange = () => this.setState({ light: 'orange' })
-	red = () => this.setState({ light: 'red' })
 	flashOn = () => this.setState({ flash: true })
 	flashOff = () => this.setState({ flash: false })
 
@@ -74,10 +70,13 @@ class Root extends React.Component {
 	}
 
 	render() {
-		const { light, flash } = this.state
+		const { flash } = this.state
+		const {
+			machineState: { value: color }
+		} = this.props
 		return (
 			<div className="app">
-				<TrafficLight light={light} flashing={flash} />
+				<TrafficLight color={color} flashing={flash} />
 				<div className="cross-button" onClick={() => this.clickSubject.next()} />
 			</div>
 		)

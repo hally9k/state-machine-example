@@ -1,15 +1,19 @@
 {
     "env": {
-      "production": {
-        "plugins": [
-            "transform-class-properties"
-        ]
-      },
-      "development": {
-        "plugins": [
-            "transform-class-properties"
-        ]
-      }
+        "production": {
+            "plugins": [
+                "transform-class-properties"
+            ]
+        },
+        "development": {
+            "plugins": [
+                "transform-class-properties"
+            ]
+        },
+        "test": {
+            "plugins": ["transform-class-properties", "transform-es2015-modules-commonjs"],
+            "sourceMap": "inline"
+        }
     },
     "presets": ["react"]
 }

@@ -9,7 +9,7 @@ import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/do'
 import './index.scss'
 
-export const lightStateChart = {
+export const statechart = {
 	key: 'light',
 	initial: 'green',
 	states: {
@@ -40,7 +40,7 @@ class Root extends React.Component {
 		super(props)
 
 		this.state = {
-			light: lightStateChart.initial,
+			light: statechart.initial,
 			flash: false
 		}
 	}
@@ -84,4 +84,4 @@ class Root extends React.Component {
 	}
 }
 
-export default hot(module)(withStatechart(lightStateChart)(Root))
+export default hot(module)(withStatechart(statechart)(Root))

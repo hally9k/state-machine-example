@@ -17,9 +17,25 @@ class Root extends React.Component {
 		super(props)
 
 		this.state = {
-			light: 'green'
+			light: 'green',
+			flash: false
 		}
 	}
+
+	command = action => {
+		switch (action) {
+			case 'flashOn':
+				this.setState({ flash: true })
+				break
+			case 'flashOff':
+				this.setState({ flash: false })
+				break
+			default:
+				break
+		}
+	}
+
+	transition = () => {}
 
 	lightMachine = Machine({
 		key: 'light',
@@ -31,9 +47,11 @@ class Root extends React.Component {
 				}
 			},
 			orange: {
+				onEntry: ['flashOn'],
 				on: {
 					TIMER: 'red'
-				}
+				},
+				onExit: ['flashOff']
 			},
 			red: {
 				on: {
@@ -48,24 +66,27 @@ class Root extends React.Component {
 	clickObservable = Observable.from(this.clickSubject)
 		.delay(2000)
 		.do(() => this.transitionLightState())
-		.delay(2000)
+		.delay(3000)
 		.do(() => this.transitionLightState())
 		.delay(5000)
 		.do(() => this.transitionLightState())
 		.subscribe()
 
-	handleCrossingRequest = () => {}
-
 	transitionLightState = () => {
+		const nextLightState = this.lightMachine.transition(this.state.light, 'TIMER')
+
+		nextLightState.actions.forEach(this.command)
+
 		this.setState(() => ({
-			light: this.lightMachine.transition(this.state.light, 'TIMER').value
+			light: nextLightState.value
 		}))
 	}
 
 	render() {
+		const { light, flash } = this.state
 		return (
 			<div className="app">
-				<TrafficLight light={this.state.light} />
+				<TrafficLight light={light} flashing={flash} />
 				<div className="cross-button" onClick={() => this.clickSubject.next()} />
 			</div>
 		)

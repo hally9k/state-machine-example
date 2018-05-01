@@ -15,7 +15,13 @@ export const statechart = {
 	states: {
 		green: {
 			on: {
-				TIMER: 'orange'
+				TIMER: {
+					orange: {
+						cond: (extState, eventObj) => {
+							return 'orange'
+						}
+					}
+				}
 			}
 		},
 		orange: {
@@ -33,7 +39,7 @@ export const statechart = {
 	}
 }
 
-class Root extends React.Component {
+export class Root extends React.Component {
 	constructor(props) {
 		super(props)
 
@@ -64,7 +70,7 @@ class Root extends React.Component {
 		.do(() => this.timer())
 
 	timer = () => {
-		this.props.transition('TIMER')
+		this.props.transition('TIMER', this.state)
 	}
 
 	get color() {
@@ -74,9 +80,12 @@ class Root extends React.Component {
 	render() {
 		const { flashing } = this.state
 
+		console.log('Parent render')
 		return (
 			<div className="app">
-				<TrafficLight color={this.color} flashing={flashing} />
+				{[[{}]].map((_, index) =>
+					_.map(() => <TrafficLight key={index} color={this.color} flashing={flashing} />)
+				)}
 				<div className="cross-button" onClick={() => this.clickSubject.next()} />
 			</div>
 		)

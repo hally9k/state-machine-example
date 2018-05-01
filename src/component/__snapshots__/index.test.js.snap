@@ -35,10 +35,10 @@ exports[`it works: orange 1`] = `
       className=""
     />
     <div
-      className=""
+      className="lit flashing"
     />
     <div
-      className="lit"
+      className=""
     />
   </div>
   <div
@@ -56,13 +56,13 @@ exports[`it works: red 1`] = `
     className="traffic-light"
   >
     <div
-      className=""
-    />
-    <div
-      className=""
-    />
-    <div
       className="lit"
+    />
+    <div
+      className=""
+    />
+    <div
+      className=""
     />
   </div>
   <div

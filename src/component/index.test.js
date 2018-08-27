@@ -1,6 +1,6 @@
-import { testStatechart } from 'react-automata'
-import { Root, statechart } from './index.jsx'
+import { testStateMachine } from "react-automata";
+import Root from "./index.jsx";
 
-test('it works', () => {
-	testStatechart({ statechart }, Root)
-})
+test("it works", () => {
+  testStateMachine(Root);
+});
